@@ -21,6 +21,10 @@
  
             <div class="col-md-9 col-lg-10 px-md-4 main-content">
                 {% include 'partials/topNavbar.html' %}
+
+                {% include 'includes/messages.html' %}
+                {% include 'includes/message_error_form.html' %}
+
                     {% block content %}
                     {% endblock content %}
             </div>
