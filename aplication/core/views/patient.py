@@ -8,7 +8,7 @@ from django.db.models import Q
 from doctor.utils import save_audit
 
 class PatientListView(ListView):
-    template_name = "core/patient/list.html"
+    template_name = "patient/list.html"
     model = Paciente
     context_object_name = 'pacientes'
     query = None
@@ -33,14 +33,14 @@ class PatientListView(ListView):
     
 class PatientCreateView(CreateView):
     model = Paciente
-    template_name = 'core/patient/form.html'
+    template_name = 'patient/form.html'
     form_class = PatientForm
     success_url = reverse_lazy('core:patient_list')
     # permission_required = 'add_supplier' # en PermissionMixn se verfica si un grupo tiene el permiso
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['title1'] = 'Crear Paciente?'
+        context['title1'] = 'Crear Paciente'
         context['grabar'] = 'Grabar Paciente'
         context['back_url'] = self.success_url
         return context
@@ -60,7 +60,7 @@ class PatientCreateView(CreateView):
     
 class PatientUpdateView(UpdateView):
     model = Paciente
-    template_name = 'core/patient/form.html'
+    template_name = 'patient/form.html'
     form_class = PatientForm
     success_url = reverse_lazy('core:patient_list')
     # permission_required = 'change_patient'

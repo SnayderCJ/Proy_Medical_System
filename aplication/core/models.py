@@ -1,6 +1,6 @@
 from datetime import date
 from django.db import models
-from doctor.const import CIVIL_CHOICES, SEX_CHOICES
+from doctor.const import CIVIL_CHOICES, SEX_CHOICES, TIPOS_DE_SANGRE_CHOICES
 from django.contrib.auth.models import User
 from doctor.utils import valida_cedula,phone_regex
 
@@ -10,8 +10,8 @@ Se gestiona como un modelo separado para mantener flexibilidad
 y permitir futuras actualizaciones."""
 class TipoSangre(models.Model):
     # almacena la descripcion del tipo de sangre
-    tipo = models.CharField(max_length=10, verbose_name="Tipo de Sangre", unique=True)
-    descripcion = models.CharField(max_length=100, verbose_name="Descripcion")
+    tipo = models.CharField(max_length=15, verbose_name="Tipo de Sangre", unique=True)
+    descripcion = models.CharField(max_length=100, verbose_name="Descripcion", null=True, blank=True)
     class Meta:
         # Nombre en singular y plural del modelo en la interfaz de administración
         verbose_name = "Tipo de Sangre"
@@ -59,7 +59,7 @@ class Paciente(models.Model):
     longitud = models.DecimalField(max_digits=18, decimal_places=6, verbose_name="Longitud", null=True, blank=True)
     # Historia clínica
     # Relación con el modelo TipoSangre, permite seleccionar el tipo de sangre del paciente
-    tipo_sangre = models.ForeignKey(TipoSangre, on_delete=models.SET_NULL, null=True, verbose_name="Tipo de Sangre",related_name="tipos_sangre")
+    tipo_sangre = models.ForeignKey(TipoSangre, on_delete=models.SET_NULL, null=True ,verbose_name="Tipo de Sangre",related_name="tipos_sangre")
     # foto del paciente
     foto = models.ImageField(upload_to='pacientes/', verbose_name="Foto", null=True, blank=True)
     # Alergias conocidas del paciente

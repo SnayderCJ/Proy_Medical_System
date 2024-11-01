@@ -1,8 +1,12 @@
 from django.urls import path
 from aplication.core.views.home import HomeTemplateView
 from aplication.core.views.patient import PatientCreateView, PatientDeleteView, PatientDetailView, PatientListView, PatientUpdateView
- 
+from aplication.core.views.tipoSangre import TipoSangreListView, TipoSangreCreateView, TipoSangreUpdateView, TipoSangreDeleteView, TipoSangreDetailView
+from aplication.core.views.especialidad import EspecialidadListView
+
+
 app_name='core' # define un espacio de nombre para la aplicacion
+
 urlpatterns = [
   # ruta principal
   path('', HomeTemplateView.as_view(),name='home'),
@@ -17,4 +21,15 @@ urlpatterns = [
   path('patient_update/<int:pk>/', PatientUpdateView.as_view(),name='patient_update'),
   path('patient_delete/<int:pk>/', PatientDeleteView.as_view(),name='patient_delete'),
   path('patient_detail/<int:pk>/', PatientDetailView.as_view(),name='patient_detail'),
+  
+  # Tipo de Sangre
+  path('tipoSangre_list/', TipoSangreListView.as_view(), name="tipoSangre_list"),
+  path('tipoSangre_create/', TipoSangreCreateView.as_view(), name="tipoSangre_create"),
+  path('tipoSangre_update/<int:pk>/', TipoSangreUpdateView.as_view(), name="tipoSangre_update"),
+  path('tipoSangre_delete/<int:pk>/', TipoSangreDeleteView.as_view(), name="tipoSangre_delete"),
+  path('tipoSangre_detail/<int:pk>/', TipoSangreDetailView.as_view(), name="tipoSangre_detail"),
+  
+  # Especialidad
+  path('especialidad_list/', EspecialidadListView.as_view(), name="especialidad_list"),
+  
 ]
