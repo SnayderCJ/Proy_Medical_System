@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy
-# from aplication.core.forms.tipoSangre import
+from aplication.core.forms.especialidad import EspecialidadForm
 from aplication.core.models import Especialidad
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.http import JsonResponse
@@ -20,7 +20,7 @@ class EspecialidadListView(ListView):
         
         if q1 is not None:
             self.query.add(Q(tipo__icontains=q1), Q.OR)
-        return self.model.objects.filter(self.query).order_by('tipo')
+        return self.model.objects.filter(self.query).order_by('activo')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -28,85 +28,86 @@ class EspecialidadListView(ListView):
         context['title1'] = "Especialidades"
         return context
     
-    # class EspecialidadCreateView(CreateView):
-    #     model = Especialidad
-    #     template_name = 'especialidad/form.html'
-    #     form_class = EspecialidadForm
-    #     success_url = reverse_lazy('core:especialidad_list')
+class EspecialidadCreateView(CreateView):
+    model = Especialidad
+    template_name = 'especialidad/form.html'
+    form_class = EspecialidadForm
+    success_url = reverse_lazy('core:especialidad_list')
 
-    #     def get_context_data(self, **kwargs):
-    #         context = super().get_context_data()
-    #         context['title1'] = 'Crear Especialidad'
-    #         context['grabar'] = 'Grabar Especialidad'
-    #         context['back_url'] = self.success_url
-    #         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['title1'] = 'Crear Especialidad'
+        context['grabar'] = 'Grabar Especialidad'
+        context['back_url'] = self.success_url
+        return context
 
-    #     def form_valid(self, form):
-    #         response = super().form_valid(form)
-    #         especialidad = self.object
-    #         save_audit(self.request, especialidad, action='A')
-    #         messages.success(self.request, f"Éxito al crear la especialidad {especialidad.tipo}.")
-    #         return response
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        especialidad = self.object
+        save_audit(self.request, especialidad, action='A')
+        messages.success(self.request, f"Éxito al crear la especialidad {especialidad.tipo}.")
+        return response
 
-    #     def form_invalid(self, form):
-    #         messages.error(self.request, "Error al enviar el formulario. Corrige los errores.")
-    #         print(form.errors)
-    #         return self.render_to_response(self.get_context_data(form=form))
-
-
-    # class EspecialidadUpdateView(UpdateView):
-    #     model = Especialidad
-    #     template_name = 'especialidad/form.html'
-    #     form_class = EspecialidadForm
-    #     success_url = reverse_lazy('core:especialidad_list')
-
-    #     def get_context_data(self, **kwargs):
-    #         context = super().get_context_data()
-    #         context['title1'] = 'Actualizar Especialidad'
-    #         context['grabar'] = 'Actualizar Especialidad'
-    #         context['back_url'] = self.success_url
-    #         return context
-
-    #     def form_valid(self, form):
-    #         response = super().form_valid(form)
-    #         especialidad = self.object
-    #         save_audit(self.request, especialidad, action='M')
-    #         messages.success(self.request, f"Éxito al modificar la especialidad {especialidad.tipo}.")
-    #         return response
-
-    #     def form_invalid(self, form):
-    #         messages.error(self.request, "Error al enviar el formulario. Corrige los errores.")
-    #         print(form.errors)
-    #         return self.render_to_response(self.get_context_data(form=form))
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al enviar el formulario. Corrige los errores.")
+        print(form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-    # class EspecialidadDeleteView(DeleteView):
-    #     model = Especialidad
-    #     success_url = reverse_lazy('core:especialidad_list')
+class EspecialidadUpdateView(UpdateView):
+    model = Especialidad
+    template_name = 'especialidad/form.html'
+    form_class = EspecialidadForm
+    success_url = reverse_lazy('core:especialidad_list')
 
-    #     def get_context_data(self, **kwargs):
-    #         context = super().get_context_data()
-    #         context['grabar'] = 'Eliminar Especialidad'
-    #         context['description'] = f"¿Desea eliminar la especialidad: {self.object.tipo}?"
-    #         context['back_url'] = self.success_url
-    #         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['title1'] = 'Actualizar Especialidad'
+        context['grabar'] = 'Actualizar Especialidad'
+        context['back_url'] = self.success_url
+        return context
 
-    #     def delete(self, request, *args, **kwargs):
-    #         self.object = self.get_object()
-    #         success_message = f"Éxito al eliminar la especialidad {self.object.tipo}."
-    #         messages.success(self.request, success_message)
-    #         return super().delete(request, *args, **kwargs)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        especialidad = self.object
+        save_audit(self.request, especialidad, action='M')
+        messages.success(self.request, f"Éxito al modificar la especialidad {especialidad.tipo}.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al enviar el formulario. Corrige los errores.")
+        print(form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-    # class EspecialidadDetailView(DetailView):
-    #     model = Especialidad
+class EspecialidadDeleteView(DeleteView):
+    model = Especialidad
+    success_url = reverse_lazy('core:especialidad_list')
 
-    #     def get(self, request, *args, **kwargs):
-    #         especialidad = self.get_object()
-    #         data = {
-    #             'id': especialidad.id,
-    #             'tipo': especialidad.tipo,
-    #             'descripcion': especialidad.descripcion,
-    #             # Añade más campos según tu modelo
-    #         }
-    #         return JsonResponse(data)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['grabar'] = 'Eliminar Especialidad'
+        context['description'] = f"¿Desea eliminar la especialidad: {self.object.tipo}?"
+        context['back_url'] = self.success_url
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_message = f"Éxito al eliminar la especialidad {self.object.tipo}."
+        messages.success(self.request, success_message)
+        return super().delete(request, *args, **kwargs)
+
+
+class EspecialidadDetailView(DetailView):
+    model = Especialidad
+
+    def get(self, request, *args, **kwargs):
+        especialidad = self.get_object()
+        data = {
+            'id': especialidad.id,
+            'nombre': especialidad.nombre,
+            'descripcion': especialidad.descripcion,
+            'activo': especialidad.activo,
+            # Añade más campos según tu modelo
+        }
+        return JsonResponse(data)

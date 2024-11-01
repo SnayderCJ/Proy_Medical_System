@@ -125,7 +125,6 @@ class Especialidad(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre de la Especialidad")
     # Descripción de la especialidad (opcional)
     descripcion = models.TextField(verbose_name="Descripción de la Especialidad", null=True, blank=True)
-
     activo = models.BooleanField(default=True,verbose_name="Activo")
     
     def __str__(self):

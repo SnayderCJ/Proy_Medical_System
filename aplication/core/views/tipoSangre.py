@@ -16,10 +16,18 @@ class TipoSangreListView(ListView):
     
     def get_queryset(self):
         self.query = Q()
-        q1 = self.request.GET.get('q') # ver
+        q1 = self.request.GET.get('q')  # Filtro de tipo de sangre
+        q2 = self.request.GET.get('rh')  # Filtro de positivo o negativo
         
         if q1 is not None:
             self.query.add(Q(tipo__icontains=q1), Q.OR)
+
+        if q2 is not None:
+            if q2.lower() == 'positivo':
+                self.query.add(Q(tipo__icontains='+'), Q.AND)
+            elif q2.lower() == 'negativo':
+                self.query.add(Q(tipo__icontains='-'), Q.AND)
+        
         return self.model.objects.filter(self.query).order_by('tipo')
     
     def get_context_data(self, **kwargs):

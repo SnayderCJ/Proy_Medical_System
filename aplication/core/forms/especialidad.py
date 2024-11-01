@@ -2,27 +2,22 @@ from django.forms import ModelForm, ValidationError
 from django import forms
 from aplication.core.models import Especialidad
 
-# Definición de la clase TipoSangreForm que hereda de ModelForm
 class EspecialidadForm(ModelForm):
-    # Clase interna Meta para configurar el formulario
-    class Meta:    
+    class Meta:
         model = Especialidad
-        # campos que se muestran en este mismo orden en el formulario como etiquetas html
-        fields = ['tipo', 'descripcion']
-     
-        # Mensajes de error personalizados para ciertos campos
+        fields = ['nombre', 'descripcion', 'activo']
+        
         error_messages = {
-            "tipo": {
-                "unique": "Ya existe un tipo de sangre con este nombre.",
+            "nombre": {
+                "unique": "Ya existe una Especialidad con este nombre.",
             },
         }
-     
-        # Personalización de los widgets o etiquetas que se van a mostrar en el formulario html si no se desea el valor por default dado en el modelo
+        
         widgets = {
-            "tipo": forms.TextInput(
+            "nombre": forms.TextInput(
                 attrs={
-                    "placeholder": "Ingrese tipo de sangre",
-                    "id": "id_tipo",
+                    "placeholder": "Ingrese nombre de la especialidad",
+                    "id": "id_nombre",
                     "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-12 dark:bg-principal dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light",
                 }
             ),
@@ -33,25 +28,27 @@ class EspecialidadForm(ModelForm):
                     "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-12 dark:bg-principal dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light",
                 }
             ),
+            "activo": forms.CheckboxInput(
+                attrs={
+                    "id": "id_activo",
+                    "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-principal dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light",
+                }
+            ),
         }
         labels = {
-            "tipo": "Tipo de Sangre",
+            "nombre": "Nombre de la Especialidad",
             "descripcion": "Descripción",
+            "activo": "Activo",
         }
 
-    # método de limpieza se ejecuta automáticamente cuando Django valida el campo tipo en el formulario al ejecutar el metodo form_valid()
-    def clean_tipo(self):
-        tipo = self.cleaned_data.get("tipo")
-        # Verificar si el campo tiene menos de 1 carácter
-        if not tipo or len(tipo) < 1:
-            raise ValidationError("El tipo de sangre debe tener al menos 1 carácter.")
-        
-        return tipo.upper()
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get("nombre")
+        if not nombre or len(nombre) < 1:
+            raise ValidationError("El nombre debe tener al menos 1 carácter.")
+        return nombre.upper()
 
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get("descripcion")
-        # Verificar si el campo tiene menos de 1 carácter
         if not descripcion or len(descripcion) < 1:
             raise ValidationError("La descripción debe tener al menos 1 carácter.")
-
         return descripcion.upper()

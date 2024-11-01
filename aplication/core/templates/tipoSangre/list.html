@@ -51,11 +51,13 @@
                     <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar Tipo de Sangre...">
                 </div>
                 <div class="col-md-6">
-                    <select class="form-select" name="sex">
-                        <option value="T">Todos</option>
-                        <option value="M">Positivo</option>
-                        <option value="F">Negativo</option>
-                    </select>
+                    <form method="GET" action="">
+                        <select class="form-select" name="rh" onchange="this.form.submit()">
+                            <option value="T" {% if request.GET.rh == "T" %}selected{% endif %}>Todos</option>
+                            <option value="positivo" {% if request.GET.rh == "positivo" %}selected{% endif %}>Positivo</option>
+                            <option value="negativo" {% if request.GET.rh == "negativo" %}selected{% endif %}>Negativo</option>
+                        </select>
+                    </form>
                 </div>
                 </form>
                 <a class="btn btn-primary mt-3 mt-md-0" href="{% url 'core:tipoSangre_create' %}">
