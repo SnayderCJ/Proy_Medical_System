@@ -10,16 +10,22 @@ from doctor.utils import save_audit
 class EspecialidadListView(ListView):
     template_name = "especialidad/list.html"
     model = Especialidad
-    context_object_name = 'Especialidades'
+    context_object_name = 'especialidades'
     query = None
     paginate_by = 2
     
     def get_queryset(self):
         self.query = Q()
         q1 = self.request.GET.get('q') # ver
+        status = self.request.GET.get('status')
         
         if q1 is not None:
-            self.query.add(Q(tipo__icontains=q1), Q.OR)
+            self.query.add(Q(activo__icontains=q1), Q.OR)
+            
+        if status == "activo":
+            self.query.add(Q(activo=True), Q.AND)
+        elif status == "inactivo":
+            self.query.add(Q(activo=False), Q.AND)
         return self.model.objects.filter(self.query).order_by('activo')
     
     def get_context_data(self, **kwargs):
@@ -45,7 +51,7 @@ class EspecialidadCreateView(CreateView):
         response = super().form_valid(form)
         especialidad = self.object
         save_audit(self.request, especialidad, action='A')
-        messages.success(self.request, f"Éxito al crear la especialidad {especialidad.tipo}.")
+        messages.success(self.request, f"Éxito al crear la especialidad {especialidad.nombre}.")
         return response
 
     def form_invalid(self, form):
@@ -71,7 +77,7 @@ class EspecialidadUpdateView(UpdateView):
         response = super().form_valid(form)
         especialidad = self.object
         save_audit(self.request, especialidad, action='M')
-        messages.success(self.request, f"Éxito al modificar la especialidad {especialidad.tipo}.")
+        messages.success(self.request, f"Éxito al modificar la especialidad {especialidad.nombre}.")
         return response
 
     def form_invalid(self, form):
@@ -107,7 +113,6 @@ class EspecialidadDetailView(DetailView):
             'id': especialidad.id,
             'nombre': especialidad.nombre,
             'descripcion': especialidad.descripcion,
-            'activo': especialidad.activo,
             # Añade más campos según tu modelo
         }
         return JsonResponse(data)
