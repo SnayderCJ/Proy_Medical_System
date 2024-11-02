@@ -3,7 +3,8 @@ from aplication.core.views.home import HomeTemplateView
 from aplication.core.views.patient import PatientCreateView, PatientDeleteView, PatientDetailView, PatientListView, PatientUpdateView
 from aplication.core.views.tipoSangre import TipoSangreListView, TipoSangreCreateView, TipoSangreUpdateView, TipoSangreDeleteView, TipoSangreDetailView
 from aplication.core.views.especialidad import EspecialidadListView, EspecialidadCreateView, EspecialidadUpdateView, EspecialidadDeleteView, EspecialidadDetailView
-
+from aplication.core.views.doctor import DoctorListView, DoctorCreateView # Seguir con las rutas de doctor
+from aplication.core.views.cargo import CargoListView, CargoCreateView, CargoUpdateView, CargoDeleteView, CargoDetailView
 
 app_name='core' # define un espacio de nombre para la aplicacion
 
@@ -35,4 +36,17 @@ urlpatterns = [
   path('especialidad_update/<int:pk>/', EspecialidadUpdateView.as_view(), name="especialidad_update"),
   path('especialidad_delete/<int:pk>/', EspecialidadDeleteView.as_view(), name="especialidad_delete"),
   path('especialidad_detail/<int:pk>/', EspecialidadDetailView.as_view(), name="especialidad_detail"),
+  
+  # Doctor
+  path('doctor_list/', DoctorListView.as_view(), name="doctor_list"),
+  path('doctor_create/', DoctorCreateView.as_view(), name="doctor_create"),
+  # Seguir con las rutas de doctor
+  
+  # Cargo 
+  path('cargo_list/', CargoListView.as_view(), name="cargo_list"),
+  path('cargo_create/', CargoCreateView.as_view(), name="cargo_create"),
+  path('cargo_update/<int:pk>/', CargoUpdateView.as_view(), name="cargo_update"),
+  path('cargo_delete/<int:pk>/', CargoDeleteView.as_view(), name="cargo_delete"),
+  path('cargo_detail/<int:pk>/', CargoDetailView.as_view(), name="cargo_detail"),
+  
 ]

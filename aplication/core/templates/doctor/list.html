@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+<div class="row">
+
+    <!-- Doctor List Content -->
+    <div class="card mb-4">
+        <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="card-title mb-0">Listado de Doctores</h5>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+        <form method="GET" action="{% url 'core:doctor_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+            <div class="col-md-6">
+            <input type="text" name="q" class="form-control search-box" value="{{ request.GET.q }}" placeholder="Buscar doctor...">
+            </div>
+            <div class="col-md-6">
+            <select class="form-select" name="specialty">
+                <option value="T">Todas las especialidades</option>
+                <option value="Cardiología">Cardiología</option>
+                <option value="Dermatología">Dermatología</option>
+                <option value="Pediatría">Pediatría</option>
+                <!-- Agrega más especialidades según sea necesario -->
+            </select>
+            </div>
+            </form>
+            <a class="btn btn-primary mt-3 mt-md-0" href="{% url 'core:doctor_create' %}">
+                <i class="fas fa-plus me-2"></i>Nuevo Doctor
+            </a>
+        </div>
+
+        <!-- Doctor Table -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Cédula</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Dirección</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Código Único</th>
+                <th>Especialidad</th>
+                <th>Teléfonos</th>
+                <th>Email</th>
+                <th>Horario de Atención</th>
+                <th>Duración de Cita</th>
+                <th>Curriculum</th>
+                <th>Firma Digital</th>
+                <th>Foto</th>
+                <th>Imagen de Receta</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in doctores %}
+                <tr>
+                <td>{{ item.nombres }}</td>
+                <td>{{ item.apellidos }}</td>
+                <td>{{ item.cedula }}</td>
+                <td>{{ item.fecha_nacimiento }}</td>
+                <td>{{ item.direccion }}</td>
+                <td>{{ item.latitud }}</td>
+                <td>{{ item.longitud }}</td>
+                <td>{{ item.codigoUnicoDoctor }}</td>
+                <td>{{ item.especialidad }}</td>
+                <td>{{ item.telefonos }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.horario_atencion }}</td>
+                <td>{{ item.duracion_cita }}</td>
+                <td>{{ item.curriculum }}</td>
+                <td>{{ item.firmaDigital }}</td>
+                <td>{{ item.imagen_receta }}</td>
+                <td>{{ item.activo }}</td>
+
+                <td><img src="{{ item.foto }}" class="rounded-circle" width="30px"></td>
+                <td><img src="{{ item.imagen_receta }}" class="rounded-circle" width="30px"></td>
+                <td>
+                    <span class="doctor-status {% if item.activo %}status-active{% else %}status-inactive{% endif %}"></span>
+                    {% if item.activo %}Activo{% else %}Inactivo{% endif %}
+                </td>
+                <td>
+                    <div class="action-buttons d-flex gap-2">
+                    <button class="btn btn-info btn-sm" title="Detalle Doctor"
+                        onclick="verDoctor('{{ item.id }}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <a href="{% url 'core:doctor_update' item.id %}" class="btn btn-info btn-sm text-white" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% with id=item.id name=item.nombres msg="Esta seguro de eliminar al doctor:" %}
+                        <button class="btn btn-danger" onclick="confirmDelete('{{ id }}','{{ name }}','{{ msg|escapejs }}');"> <i class="fa-solid fa-trash"></i></button>
+                    {% endwith %}
+                    </div>
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="d-flex justify-content-between align-items-center mt-4">
+            <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} doctores</p>
+            <ul class="pagination mb-0">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fas fa-chevron-left"></i></a>
+                </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                </li>
+            {% endif %}
+            </ul>
+        </nav>
+        <!-- Fin de Pagination -->
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- llama al modal generico de eliminacion -->
+{% include 'includes/confirm_delete_modal.html' %}
+<!-- llama al modal de mostrar datos del detalle del doctor -->
+{% include 'doctor/includes/doctor_detail_modal.html' %}
+<script>
+/* funciones del modal eliminar*/
+function confirmDelete(id, name, msg) {
+    // Actualiza el mensaje del modal
+    document.getElementById('modalMessage').innerText = `${msg} ${name}`;
+
+    // Actualiza la acción del formulario
+    const form = document.getElementById('deleteForm');
+    form.action = `/doctor_delete/${id}/`; // Ajusta la URL según tu configuración
+
+    // Muestra el modal
+    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    modal.show();
+}
+function closeModal() {
+    const modalElement = document.getElementById('confirmDeleteModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+    modalInstance.hide();
+    }
+}
+/* funciones del modal detalle */
+function verDoctor(id) {
+// Obtener los datos del doctor
+    fetch(`/doctor_detail/${id}/`)
+    .then(response => response.json())
+    .then(data => {
+    // Llenar el modal con los datos
+    document.getElementById('doctor-id').textContent = data.id;
+    document.getElementById('doctor-nombres').textContent = data.nombres;
+    document.getElementById('doctor-apellidos').textContent = data.apellidos;
+    document.getElementById('doctor-foto').src = data.foto;
+    document.getElementById('doctor-especialidad').textContent = data.especialidad;
+    document.getElementById('doctor-telefono').textContent = data.telefono;
+    document.getElementById('doctor-email').textContent = data.email;
+    
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('doctorModal'));
+    modal.show();
+    })
+    .catch(error => {
+    console.error('Error:', error);
+    alert('Error al cargar los datos del doctor');
+    });
+}
+</script>
+{% endblock content %}

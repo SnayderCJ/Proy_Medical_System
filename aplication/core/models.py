@@ -181,6 +181,7 @@ class Doctor(models.Model):
     
     def __str__(self):
         return f"{self.apellidos}"
+    
     class Meta:
         # Nombre singular y plural del modelo en la interfaz administrativa
         verbose_name = "Doctor"
@@ -193,7 +194,6 @@ class Cargo(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre del Cargo",unique=True)
     # Descripción del cargo (opcional)
     descripcion = models.TextField(verbose_name="Descripción del Cargo", null=True, blank=True)
-
     activo = models.BooleanField(default=True,verbose_name="Activo")
     
     def __str__(self):
